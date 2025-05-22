@@ -27,7 +27,7 @@ def start_chainlit():
     os.chdir(project_dir)
 
     try:
-        subprocess.run([venv_python, "-m", "chainlit", "run", main_script])
+        subprocess.run([venv_python, "-m", "chainlit", "run", main_script, "--port", "5000", "--host", "0.0.0.0"])
     except KeyboardInterrupt:
         print("🛑 Chainlit stopped by user.")
 
