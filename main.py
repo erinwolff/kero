@@ -62,19 +62,21 @@ async def on_message(message: cl.Message):
 
     # Trim history if over token limit
     def trim_history(history, prompt, limit=TOKEN_LIMIT):
-        temp_history = history.copy()
-        while temp_history:
-            contextual_prompt = ""
-            for turn in temp_history:
-                contextual_prompt += (
-                    f"User: {turn['prompt']}\nAssistant: {turn['response']}\n"
-                )
-            contextual_prompt += f"User: {prompt}\nAssistant: "
-            if estimate_tokens(contextual_prompt) <= limit:
-                return temp_history
-            temp_history.pop(0)  # Remove oldest turn
-        return []
+        total_tokens = estimate_tokens(f"User: {prompt}\nAssistant: ")
+        trimmed_history = []
 
+        # Iterate through history and add turns until the token limit is exceeded
+        for turn in reversed(history):  # Start from the most recent turn
+            turn_tokens = estimate_tokens(
+                f"User: {turn['prompt']}\nAssistant: {turn['response']}\n"
+            )
+            if total_tokens + turn_tokens > limit:
+                break
+            trimmed_history.append(turn)
+            total_tokens += turn_tokens
+
+        # Reverse the trimmed history to maintain chronological order
+        return list(reversed(trimmed_history))
     # Before building contextual_prompt:
     history = trim_history(history, prompt)
 
