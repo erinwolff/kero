@@ -2,6 +2,7 @@ import subprocess
 import time
 import os
 
+
 def is_ollama_running():
     try:
         subprocess.check_output(["lsof", "-i", ":11434"])
@@ -9,9 +10,11 @@ def is_ollama_running():
     except subprocess.CalledProcessError:
         return False
 
+
 def start_ollama():
     print("🔄 Starting Ollama server...")
     return subprocess.Popen(["ollama", "serve"])
+
 
 def start_chainlit():
     print("🚀 Launching Chainlit app...")
@@ -37,6 +40,7 @@ def kill_process(proc, name):
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
+
 
 if __name__ == "__main__":
     ollama_proc = None
