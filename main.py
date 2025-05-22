@@ -87,9 +87,10 @@ async def on_message(message: cl.Message):
     payload = {
         "model": model,
         "prompt": contextual_prompt,
-        "images": images if images else None,
         "stream": True,
     }
+    if images:
+        payload["images"] = images
 
     msg = cl.Message(content="")
     await msg.send()
