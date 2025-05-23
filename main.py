@@ -4,19 +4,21 @@ import requests
 import json
 import asyncio
 import base64
+import PyPDF2  # For PDF document extraction
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 DEFAULT_MODEL = "gemma3:4b"
 SYSTEM_PROMPT = (
-  "Your name is Kero. You're a frog who is knowledgeable and helpful."
-  "Always provide clear, concise, and accurate answers, with an occasional froggy flair."
-  "Do not prefix your answers with 'Assistant:'."
+    "Your name is Kero. You're a frog who is knowledgeable and helpful."
+    "Always provide clear, concise, and accurate answers, with an occasional froggy flair."
+    "Do not prefix your answers with 'Assistant:'."
 )
+
 
 @cl.on_chat_start
 async def on_chat_start():
     cl.user_session.set("conversation_history", [])
-    
+
     # Show dropdown for model selection
     settings = await cl.ChatSettings(
         [
@@ -47,11 +49,13 @@ async def on_message(message: cl.Message):
 
     prompt = message.content or "Describe the image."
     images = []
+    documents = []
+    document_texts = []
 
     # Get prior messages for contextual history
     history = cl.user_session.get("conversation_history", [])
 
-    # Process uploaded images
+    # Process uploaded images and documents
     if message.elements:
         for uploaded_element in message.elements:
             if uploaded_element.mime.startswith("image/"):
@@ -59,6 +63,35 @@ async def on_message(message: cl.Message):
                     file_data = f.read()
                 b64_image = base64.b64encode(file_data).decode("utf-8")
                 images.append(b64_image)
+            elif uploaded_element.mime == "application/pdf":
+                try:
+                    with open(uploaded_element.path, "rb") as f:
+                        reader = PyPDF2.PdfReader(f)
+                        text = "\n".join(
+                            page.extract_text() or "" for page in reader.pages
+                        )
+                        if text:
+                            document_texts.append(
+                                f"[PDF: {uploaded_element.name}]\n{text}\n"
+                            )
+                except Exception as e:
+                    document_texts.append(
+                        f"[Error reading PDF: {uploaded_element.name}] {str(e)}"
+                    )
+            elif uploaded_element.mime == "text/plain":
+                try:
+                    with open(
+                        uploaded_element.path, "r", encoding="utf-8", errors="ignore"
+                    ) as f:
+                        text = f.read()
+                        if text:
+                            document_texts.append(
+                                f"[Text file: {uploaded_element.name}]\n{text}\n"
+                            )
+                except Exception as e:
+                    document_texts.append(
+                        f"[Error reading text file: {uploaded_element.name}] {str(e)}"
+                    )
 
     TOKEN_LIMIT = 128_000
 
@@ -83,6 +116,7 @@ async def on_message(message: cl.Message):
 
         # Reverse the trimmed history to maintain chronological order
         return list(reversed(trimmed_history))
+
     # Before building contextual_prompt:
     history = trim_history(history, prompt)
 
@@ -90,6 +124,9 @@ async def on_message(message: cl.Message):
     contextual_prompt = f"{SYSTEM_PROMPT}\n"
     for turn in history:
         contextual_prompt += f"User: {turn['prompt']}\nAssistant: {turn['response']}\n"
+    # If there are document texts, append them to the prompt
+    if document_texts:
+        contextual_prompt += "\n".join(document_texts) + "\n"
     contextual_prompt += f"User: {prompt}\nAssistant: "
 
     payload = {
