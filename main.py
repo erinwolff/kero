@@ -12,7 +12,9 @@ DEFAULT_MODEL = "gemma3:4b"
 @cl.on_chat_start
 async def on_chat_start():
     cl.user_session.set("conversation_history", [])
-    await cl.ChatSettings(
+    
+    # Show dropdown for model selection
+    settings = await cl.ChatSettings(
         [
             Select(
                 id="Model",
@@ -23,7 +25,7 @@ async def on_chat_start():
         ]
     ).send()
 
-    selected_model = "gemma3:4b"
+    selected_model = settings["Model"]
     cl.user_session.set("model_name", selected_model)
 
     await cl.Message(content=f"Ribbit ribbit ☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆").send()
