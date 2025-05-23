@@ -5,13 +5,14 @@ Kero is a local chatbot web app built with [Chainlit](https://www.chainlit.io/) 
 ## Features
 - Conversational AI with context memory
 - Image upload and vision support
+- Model selection dropdown (currently only `gemma3:4b`)
 - Customizable theme (see `public/theme.json`)
 - Local, private, and fast
 
 ## Requirements
 - Python 3.8+
 - [Ollama](https://ollama.com/) installed and available in your PATH
-- (Optional) Virtual environment for Python dependencies
+- (Optional) Python virtual environment
 
 ## Installation
 1. Clone this repository.
@@ -36,17 +37,18 @@ python run_chat.py
 ```
 This will start the Ollama server (if not already running) and launch the Chainlit app.
 
-The web UI will be available at [http://localhost:8000](http://localhost:8000) by default.
+The web UI will be available at [http://localhost:5000](http://localhost:5000) by default.
 
 ## File Overview
-- `main.py` — Chainlit app logic (chat, image upload, context)
-- `run_chat.py` — Script to launch Ollama and Chainlit together
-- `requirements.txt` — Python dependencies
+- `main.py` — Chainlit app logic (chat, image upload, context, model selection)
+- `run_chat.py` — Script to launch Ollama and Chainlit together (on port 5000)
+- `requirements.txt` — Python dependencies (`chainlit`, `requests`)
 - `public/` — Theme and avatar assets
 
 ## Customization
 - Edit `public/theme.json` to change the UI theme.
 - Add avatar images to `public/avatars/`.
+- You can update the system prompt in `main.py` to change Kero's personality or instructions. By default, Kero is themed as a helpful frog assistant.
 
 ## License
 MIT License
