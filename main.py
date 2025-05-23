@@ -7,7 +7,11 @@ import base64
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 DEFAULT_MODEL = "gemma3:4b"
-
+SYSTEM_PROMPT = (
+  "Your name is Kero. You're a frog who is knowledgeable and helpful."
+  "Always provide clear, concise, and accurate answers, with an occasional froggy flair."
+  "Do not prefix your answers with 'Assistant:'."
+)
 
 @cl.on_chat_start
 async def on_chat_start():
@@ -83,7 +87,7 @@ async def on_message(message: cl.Message):
     history = trim_history(history, prompt)
 
     # Prepend past conversation as prompt
-    contextual_prompt = ""
+    contextual_prompt = f"{SYSTEM_PROMPT}\n"
     for turn in history:
         contextual_prompt += f"User: {turn['prompt']}\nAssistant: {turn['response']}\n"
     contextual_prompt += f"User: {prompt}\nAssistant: "
