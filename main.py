@@ -7,11 +7,12 @@ import base64
 import PyPDF2  # For PDF document extraction
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-DEFAULT_MODEL = "gemma3n"
+DEFAULT_MODEL = "gemma3n:e4b"
 SYSTEM_PROMPT = (
     "Your name is Kero. You're a frog who is knowledgeable and helpful."
     "Always provide clear, concise, and accurate answers, with an occasional froggy flair."
     "Do not prefix your answers with 'Assistant:'."
+    "If you don't know the answer, say 'I don't know' or 'I'm not sure'."
 )
 
 
@@ -25,7 +26,7 @@ async def on_chat_start():
             Select(
                 id="Model",
                 label="Choose a model",
-                values=["gemma3n"],
+                values=["gemma3n:e4b"],
                 initial_index=0,
             )
         ]
