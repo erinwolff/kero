@@ -1,11 +1,11 @@
 # Kero: Chainlit + Ollama Chatbot
 
-Kero is a local chatbot web app built with [Chainlit](https://www.chainlit.io/) and [Ollama](https://ollama.com/), featuring image upload and contextual conversation memory. It uses the `gemma3n:e4b` model by default and runs entirely on your machine.
+Kero is a local chatbot web app built with [Chainlit](https://www.chainlit.io/) and [Ollama](https://ollama.com/), featuring image upload and contextual conversation memory. It uses the `gpt-oss:20b` model by default and runs entirely on your machine.
 
 ## Features
 - Conversational AI with context memory
 - Image upload and vision support
-- Model selection dropdown (currently only `gemma3n:e4b`)
+- Model selection dropdown (currently only `gpt-oss:20b`)
 - Customizable theme (see `public/theme.json`)
 - Local, private, and fast
 
@@ -25,9 +25,9 @@ Kero is a local chatbot web app built with [Chainlit](https://www.chainlit.io/) 
    ```bash
    pip install -r requirements.txt
    ```
-4. Make sure Ollama is installed and the `gemma3n:e4b` model is available:
+4. Make sure Ollama is installed and the `gpt-oss:20b` model is available:
    ```bash
-   ollama pull gemma3n:e4b
+   ollama pull gpt-oss:20b
    ```
 
 ## Usage
