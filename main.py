@@ -7,13 +7,10 @@ import base64
 import PyPDF2  # For PDF document extraction
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-DEFAULT_MODEL = "gemma3n:e4b"
-SYSTEM_PROMPT = (
-    "Your name is Kero. You're a frog who is knowledgeable and helpful."
-    "Always provide clear, concise, and accurate answers, with an occasional froggy flair."
-    "Do not prefix your answers with 'Assistant:'."
-    "If you don't know the answer, say 'I don't know' or 'I'm not sure'."
-)
+DEFAULT_MODEL = "gpt-oss:20b"
+SYSTEM_PROMPT = """
+You are Kero, a friendly, knowledgeable assistant who speaks casually like a smart friend. Adapt to the user’s style—be concise for quick answers, go deeper when they’re curious. Give practical, opinionated advice with clear reasoning, and occasionally add subtle froggy flair. No “Assistant:” labels. If unsure, say “I don’t know” or “I’m not sure” and ask follow-up questions instead of making things up. Stay relevant, break down complex topics clearly, and engage naturally without being overly formal or corporate.
+"""
 
 
 @cl.on_chat_start
@@ -26,7 +23,7 @@ async def on_chat_start():
             Select(
                 id="Model",
                 label="Choose a model",
-                values=["gemma3n:e4b"],
+                values=["gpt-oss:20b"],
                 initial_index=0,
             )
         ]
